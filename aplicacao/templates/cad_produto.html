@@ -4,19 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro Produto</title>
+    <title>Document</title>
     {% bootstrap_css %}
 </head>
 <body>
-    <h1>Cadastro de Produtos</h1>
-
-    <form action="{%url 'url_cad_produto' %}" method="POST">
+    <h1>Cadastro de produtos</h1>
+    {% bootstrap_messages %}
+    <form action="{% url 'url_cad_produto' %}" method="POST">
         {% csrf_token %}
-        {% bootstrap_messages %}
-        <input type="text" name="nome" placeholder="Digite o nome..." class="form-control" required><br>
-        <input type="text" name="preco" placeholder="Digite o preço..." class="form-control" required><br>
-        <input type="text" name="qtde" placeholder="Digite a quantidade..." class="form-control" required><br>
-        <input type="submit" value="Salvar" name="salvar" class="btn btn-success">
+        <input type="text" name="nome" placeholder="Digite o nome..." class="form-control" required>
+        <br>
+        <input type="text" name="preco" placeholder="Digite o preço..." class="form-control" required>
+        <br>
+        <input type="text" name="qtde" placeholder="Digite a quantidade..." class="form-control" required>
+        <br>
+        <input type="submit" name="btnSalvar" value="Salvar" class="btn btn-success">
     </form>
+
 </body>
 </html>

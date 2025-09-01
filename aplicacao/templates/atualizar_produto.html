@@ -4,18 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Atualizar Produto</title>
+    <title>Document</title>
     {% bootstrap_css %}
 </head>
 <body>
-    <h1>Atualização de Produtos</h1>
-
-    <form action="{%url 'url_atualizar_produto' prod.id %}" method="POST">
+    <h1>Atualização de produtos</h1>
+    
+    <form action="{% url 'url_atualizar_produto' prod.id %}" method="POST">
         {% csrf_token %}
-        <input type="text" value="{{ prod.nome }}" name="nome" class="form-control" required><br>
-        <input type="text" value="{{ prod.preco }}" name="preco" placeholder="Digite o preço do produto" class="form-control" required><br>
-        <input type="text" value="{{ prod.qtde }}" name="qtde" placeholder="Digite a quantidade do produto" class="form-control" required><br>
-        <input type="submit" value="Salvar" name="salvar" class="btn btn-success">
+        <input type="text" name="nome" value="{{ prod.nome}}" class="form-control" required>
+        <br>
+        <input type="text" name="preco" value="{{ prod.preco}}" class="form-control" required>
+        <br>
+        <input type="text" name="qtde" value="{{ prod.qtde}}" class="form-control" required>
+        <br>
+        <input type="submit" name="btnSalvar" value="Salvar" class="btn btn-success">
     </form>
+
 </body>
 </html>

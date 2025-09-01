@@ -4,17 +4,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
+    <title>Document</title>
     {% bootstrap_css %}
 </head>
 <body>
-    <h1>Tela de Login</h1>
-
+    <div class="container">
+    <h1>Tela de login</h1>
     <form action="{% url 'url_entrar' %}" method="POST">
         {% csrf_token %}
-        <input type="text" name="nome" placeholder="Digite o nome de usuário" required><br>
-        <input type="password" name="senha" placeholder="Digite a senha do usuário" required><br>
-        <input type="submit" name="entrar" value="Entrar"><br>
+        <input type="text" name="nome" placeholder="Digite o usuario..." required>
+        <br>
+        <input type="password" name="senha" placeholder="Digite a senha..." required>
+        <br>
+        <input type="submit" name="btnEntrar" value="Entrar" class="btn btn-success">
     </form>
+     </div>
 </body>
 </html>
