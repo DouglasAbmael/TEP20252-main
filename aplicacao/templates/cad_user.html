@@ -1,0 +1,24 @@
+{% load booststrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de usuário</title>
+    {% booststrap_css %}
+</head>
+<body>
+    <div class="container">
+        <form action="{% url 'url cad_user' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="nome" placeholder="Digite o nome do usuário" class="form-control" required>
+        
+        <input type="password" name="senha" placeholder="Digite a senha do usuário" class="form-control" required>
+
+        <input type="email" name="email" placeholder="Digite o email do usuário" class="form-control" required>
+
+        <input type="submit" value="salvar" name="btn_salvar" class="btn btn_salvar">
+</form>
+    </div>
+</body>
+</html>

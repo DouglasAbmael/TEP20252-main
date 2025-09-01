@@ -4,7 +4,7 @@ from django.http.response import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
-
+from django.contrib import messages
 # Create your views here.
 
 def index(request):
@@ -37,6 +37,7 @@ def cad_produto(request):
             produto.save()
             return redirect('url_produtos')
         else:
+            messages.error(request, "precisa estar logado para visualizar")
             return redirect('url_entrar')
     
 def atualizar_produto(request, id):
@@ -74,7 +75,27 @@ def entrar(request):
 
         if user:
             login(request, user)
-            return HttpResponse("Usuário logado com sucesso")
+            return redirect("url_produtos")
         else:
             return HttpResponse("Falha no login")
+def cad_user(request):
+    if request.method == 'POST':
+        nome = request.POST('nome')
+        senha = request.POST('senha')
+        email = request.POST('email')
+
+        user = User.objects.filter(username=nome).first
+
+        if user:
+            return HttpResponse("usuário já existe")
+        
+        user = User.objects.create_user(username=nome, email=email, password=senha)
+        user.save()
+        return HttpResponse("usuário criado")
+    else:
+        return render(request, "cad_user.html")
+
+def sair(request):
+    logout(request)
+    return redirect('url_entrar')
 
