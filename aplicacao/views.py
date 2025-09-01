@@ -5,6 +5,7 @@ from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .forms import ClienteForm, PerfilForm
 
 def index(request):
     context = {
@@ -102,4 +103,16 @@ def sair(request):
     logout(request)
     return redirect('url_entrar')
 
-
+def cad_cliente(request):
+    if request.method == "POST":
+        form_cliente = ClienteForm(request.POST, request.FILES)
+        form_perfil = PerfilForm(request.POST, request.FILES)
+        if form_cliente.is_valid() and form_perfil.is_valid():
+            cliente = form_cliente.save()
+            perfil = form_perfil.save(commit=False)
+            perfil.cliente = cliente
+            perfil.save()
+    
+    form = ClienteForm()
+    context = {'form_cliente': form}
+    return render(request, "cad_cliente.html", context)
