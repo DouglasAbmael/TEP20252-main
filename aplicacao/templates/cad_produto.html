@@ -12,9 +12,9 @@
 
     <form action="{%url 'url_cad_produto' %}" method="POST">
         {% csrf_token %}
-        <input type="text" name="nome" placeholder="Digite o nome do produto" class="form-control" required><br>
-        <input type="text" name="preco" placeholder="Digite o preço do produto" class="form-control" required><br>
-        <input type="text" name="qtde" placeholder="Digite a quantidade do produto" class="form-control" required><br>
+        <input type="text" name="nome" placeholder="Digite o nome..." class="form-control" required><br>
+        <input type="text" name="preco" placeholder="Digite o preço..." class="form-control" required><br>
+        <input type="text" name="qtde" placeholder="Digite a quantidade..." class="form-control" required><br>
         <input type="submit" value="Salvar" name="salvar" class="btn btn-success">
     </form>
 </body>

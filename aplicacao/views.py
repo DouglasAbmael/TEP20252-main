@@ -3,6 +3,7 @@ from .models import Produto
 from django.http.response import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from django.contrib.auth.decorators import login_required
 
 # Create your views here.
 
@@ -12,6 +13,7 @@ def index(request):
     }
     return render(request, 'index.html', context)
 
+@login_required(login_url="url_entrar")
 def produtos(request):
     produtos = Produto.objects.all()
     context = {
@@ -20,21 +22,22 @@ def produtos(request):
     return render(request, 'produtos.html', context)
 
 def cad_produto(request):
-
-    if request.method == "GET":
-        return render(request, 'cad_produto.html')
-    elif request.method == "POST":
-        nome = request.POST.get('nome')
-        preco = request.POST.get('preco').replace(',', '.')
-        qtde = request.POST.get('qtde')
-
-        produto = Produto(
+    if request.user.is_authenticated:
+        if request.method == "GET":
+            return render(request, 'cad_produto.html')
+        elif request.method == "POST":
+            nome = request.POST.get('nome')
+            preco = request.POST.get('preco').replace(',', '.')
+            qtde = request.POST.get('qtde')
+            produto = Produto(
             nome = nome,
             preco = preco,
             qtde = qtde
-        )
-        produto.save()
-        return redirect('url_produtos')
+            )
+            produto.save()
+            return redirect('url_produtos')
+        else:
+            return redirect('url_entrar')
     
 def atualizar_produto(request, id):
     #prod = Produto.objects.get(id=id)
