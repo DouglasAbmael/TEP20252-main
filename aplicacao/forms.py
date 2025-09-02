@@ -9,4 +9,4 @@ class ClienteForm(forms.ModelForm):
 class PerfilForm(forms.ModelForm):
     class Meta:
         model = Perfil
-        fields = ('telefone', 'rua', 'numero', 'cep', 'bairro', 'cidade', 'complemento'
+        fields = ('telefone', 'rua', 'numero', 'cep', 'bairro', 'cidade', 'complemento')

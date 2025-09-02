@@ -114,5 +114,8 @@ def cad_cliente(request):
             perfil.save()
     
     form = ClienteForm()
-    context = {'form_cliente': form}
+    context = {
+        'form_cliente': form_cliente,
+        'form_perfil': form_perfil
+        }
     return render(request, "cad_cliente.html", context)
