@@ -8,14 +8,16 @@
     {% bootstrap_css %}
 </head>
 <body>
-    <form action="{% url 'url_cad_cliente'%}" method="POST">
-        {% csrf_token %}
-        <table>
-            {{ form_cliente.as_table }}
-            {{ form_perfil.as_table }}
-        </table>
-        <input type="submit" value="Salvar" class="btn btn-success">
-    </form>
+    <div class="container my-4">
+        <form action="{% url 'url_cad_cliente'%}" method="POST">
+            {% csrf_token %}
+            <table>
+                {{ form_cliente.as_table }}
+                {{ form_perfil.as_table }}
+            </table>
+            <input type="submit" value="Salvar" class="btn btn-success">
+        </form>
+    </div>
 
 </body>
 </html>
