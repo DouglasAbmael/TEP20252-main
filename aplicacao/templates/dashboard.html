@@ -43,14 +43,13 @@
 
     <div class="container">
 
-        <h1 class="header">Dashboard</h1>
+        <h1 class="header">GRÁFICOS</h1>
 
         <main class="grid-container">
 
             {% if sentimento_reviews_view %}
                 <div class="card">
                     <h1>Gráfico de análise 1</h1>
-                    <h1>Análise de Sentimento</h1>
                     <img src="data:image/png;base64,{{ sentimento_reviews_view }}" alt="Gráfico de Análise de Sentimento">
                 </div>
             {% endif %}
@@ -64,7 +63,7 @@
 
             {% if livros_mais_avaliados_view %}
                 <div class="card">
-                    <h1> 3</h1>
+                    <h1>Gráfico de análise  3</h1>
                     <img src="data:image/png;base64,{{ livros_mais_avaliados_view }}" alt="Gráfico dos Top 10 Livros Mais Avaliados">
                 </div>
             {% endif %}
