@@ -1,0 +1,25 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Clientes</title>
+    {% bootstrap_css %}
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+            <h1 class="text-center mb-4">Cadastro de Clientes</h1>
+
+            <form action="{%url 'url_cad_clientes' %}" method="POST" class="mb-3">
+                {% csrf_token %}
+                {% bootstrap_messages %}
+                <input type="text" name="nome" placeholder="Digite seu nome" class="form-control" required><br>
+                <input type="text" name="email" placeholder="Digite o email" class="form-control" required><br>
+                <input type="submit" value="Salvar" name="salvar" class="btn btn-success w-100">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

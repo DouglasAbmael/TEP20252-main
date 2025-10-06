@@ -4,24 +4,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cadastro de usuário</title>
+    <title>Cadastro de Usuarios</title>
     {% bootstrap_css %}
 </head>
 <body>
     {% bootstrap_messages %}
-    <div class="container">
-        <form action="{% url 'url_cad_user' %}" method="POST">
-            {% csrf_token %}
-            <input type="text" name="nome" placeholder="Digite o nome do usuário..." class="form-control" required> 
-            
-            <input type="password" name="senha" placeholder="Digite a senha do usuário..." class="form-control" required> 
-            
-            <input type="email" name="email" placeholder="Digite o e-mail do usuário..." class="form-control" required> 
-            
-            <input type="submit" value="Salvar" name="btnSalvar" class="btn btn-success">
-        </form>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+            <h1 class="text-center mb-4">Cadastrar Usuário</h1>
+            <form action="{% url 'url_cad_user' %}" method="POST" class="mb-3">
+                {% csrf_token %}
+                <input type="text" name="nome" placeholder="Digite o nome do usuário" class="form-control mb-3" required>
+                <input type="password" name="senha" placeholder="Digite a senha do usuário" class="form-control mb-3" required>
+                <input type="email" name="email" placeholder="Digite o email do usuário" class="form-control mb-3" required>
+                <input type="submit" value="Salvar" name="btn_salvar" class="btn btn-success w-100">
+            </form>
+        </div>
     </div>
-
-
 </body>
 </html>

@@ -1,0 +1,53 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venda de produtos</title>
+    {% bootstrap_css %}
+</head>
+
+<body>
+    {% bootstrap_messages %}
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+            <form method="POST" class="mb-3">
+                {% csrf_token %}
+                <select name="cliente" class="form-control mb-3">
+                    <option value="">Selecione o cliente</option>
+                    {% for cliente in clientes %}
+                    <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select>
+
+                <h3 class="mb-3">Produtos</h3>
+                {% for produto in produtos %}
+                <div class="card mb-2 shadow-sm">
+                    <div class="card-body d-flex align-items-center justify-content-between">
+
+                        <div class="form-check">
+                            <input class="form-check-input" type="checkbox" id="produto_{{ produto.id }}"
+                                name="produto_{{ produto.id }}">
+                            <label class="form-check-label fw-bold" for="produto_{{ produto.id }}">
+                                {{ produto.nome }} - R$ {{ produto.preco }}
+                            </label>
+                        </div>
+
+                        <div class="input-group" style="max-width: 150px;">
+                            <span class="input-group-text">Qtd</span>
+                            <input type="number" name="quantidade_{{ produto.id }}" class="form-control" min="1">
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+
+                <button type="submit" , class="btn btn-success w-100">Salvar Venda</button>
+            </form>
+        </div>
+    </div>
+</body>
+
+</html>

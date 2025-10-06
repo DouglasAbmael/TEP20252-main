@@ -8,18 +8,30 @@
     {% bootstrap_css %}
 </head>
 <body>
-    <h1>PAGINA INICIAL</h1>
-    {% csrf_token %}
+    {% bootstrap_messages %}
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
+            <h1 class="text-center mb-4">PAGINA INICIAL</h1>
+            {% csrf_token %}
 
-    <form action="{% url 'url_produto' %}" method="GET">
-        <input type="submit" name="btn_produto" value="Lista de Produtos" class="btn btn-success">
-    </form>
+            <form action="{% url 'url_produtos' %}" method="GET" class="mb-3">
+                <input type="submit" name="btn_produtos" value="Lista de Produtos" class="btn btn-success w-100">
+            </form>
 
-    <form action="{% url 'url_cad_cliente' %}" method="GET">
-        <input type="submit" name="btn_novo_cliente" value="Novo Cliente" class="btn btn-success">
-    </form>
-    <form action="{% url 'url_registrar_venda' %}" method="GET">
-        <input type="submit" name="btn_novo_venda" value="Nova Venda" class="btn btn-success">
-    </form>
+            <form action="{% url 'url_cad_clientes' %}" method="GET" class="mb-3">
+                <input type="submit" name="btn_novo_cliente" value="Novo Cliente" class="btn btn-success w-100">
+            </form>
+            <form action="{% url 'url_vendas' %}" method="GET" class="mb-3">
+                <input type="submit" name="btn_novo_venda" value="Nova Venda" class="btn btn-success w-100">
+            </form>
+            <form action="{% url 'dashboard' %}" method="GET" class="mb-3">
+                <input type="submit" name="btn_dashboard" value="Dashboard" class="btn btn-success w-100">
+            </form>
+            <form action="{% url 'url_sair' %}" method="GET" class="mb-3">
+                <input type="submit" name="btn_sair" value="Sair do sistema" class="btn btn-danger w-100">
+            </form>
+            
+        </div>
+    </div>
 </body>
 </html>

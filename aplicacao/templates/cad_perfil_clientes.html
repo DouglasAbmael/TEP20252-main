@@ -1,0 +1,36 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil de Clientes</title>
+    {% bootstrap_css %}
+</head>
+<body>
+    <div class="container d-flex justify-content-center align-items-center vh-100">
+        <div class="card shadow p-4" style="max-width: 500px; width: 100%;">
+            <h1 class="text-center mb-4">Perfil do Cliente</h1>
+
+            <form action="{%url 'url_perfil_cliente' %}" method="POST">
+                {% csrf_token %}
+                {% bootstrap_messages %}
+                <select name="cliente_id" id="cliente_id" class="form-control">
+                    <option value="">Selecione o cliente</option>
+                    {% for cliente in clientes %}
+                        <option value="{{ cliente.id }}">{{ cliente.nome }}</option>
+                    {% endfor %}
+                </select><br>
+                <input type="text" name="telefone" placeholder="Digite o telefone" class="form-control" required><br>
+                <input type="text" name="rua" placeholder="Digite o nome da rua" class="form-control" required><br>
+                <input type="text" name="numero" placeholder="Digite o numero" class="form-control" required><br>
+                <input type="text" name="cep" placeholder="Digite o cep" class="form-control" required><br>
+                <input type="text" name="bairro" placeholder="Digite o bairro" class="form-control" required><br>
+                <input type="text" name="cidade" placeholder="Digite a cidade" class="form-control" required><br>
+                <input type="text" name="complemento" placeholder="Digite o complemento" class="form-control" required><br>
+                <input type="submit" value="Salvar" name="salvar" class="btn btn-success w-100">
+            </form>
+        </div>
+    </div>
+</body>
+</html>

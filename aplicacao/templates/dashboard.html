@@ -1,0 +1,62 @@
+{% load bootstrap4 %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard</title>
+    {% bootstrap_css %}
+</head>
+
+<body>
+    <div class="container my-5">
+        <h2 class="text-center mb-5">📊 Dashboard de Análises</h2>
+
+        <div class="row g-4">
+            <!-- Usuários Mais Ativos -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Usuários Mais Ativos</h5>
+                        <img src="{{ grafico_usuarios_ativos }}" class="img-fluid rounded" alt="Usuários Mais Ativos">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Evolução das Avaliações -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Evolução das Avaliações</h5>
+                        <img src="{{ grafico_evolucao_reviews }}" class="img-fluid rounded"
+                            alt="Evolução das Avaliações">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Preço vs Nota -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Preço vs Nota</h5>
+                        <img src="{{ grafico_preco_score }}" class="img-fluid rounded" alt="Preço vs Nota">
+                    </div>
+                </div>
+            </div>
+
+            <!-- Distribuição de Sentimentos -->
+            <div class="col-md-6">
+                <div class="card shadow-sm h-100">
+                    <div class="card-body text-center">
+                        <h5 class="card-title">Distribuição de Sentimentos</h5>
+                        <img src="{{ grafico_sentimento }}" class="img-fluid rounded" alt="Distribuição de Sentimentos">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+</html>
