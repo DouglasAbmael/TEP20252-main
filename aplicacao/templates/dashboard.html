@@ -1,62 +1,98 @@
-{% load bootstrap4 %}
 <!DOCTYPE html>
-<html lang="en">
-
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Dashboard</title>
-    {% bootstrap_css %}
+    <style>
+        body {
+            color: #333;
+            margin: 0;
+            padding: 2rem;
+        }
+        .container {
+            max-width: 1600px;
+            margin: auto;
+        }
+        .header {
+            text-align: center;
+        }
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(500px, 1fr));
+            gap: 2rem;
+        }
+        .card {
+            background-color: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            padding: 1.5rem 2rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+        }
+        .card img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 4px;
+        }
+    </style>
 </head>
-
 <body>
-    <div class="container my-5">
-        <h2 class="text-center mb-5">📊 Dashboard de Análises</h2>
 
-        <div class="row g-4">
-            <!-- Usuários Mais Ativos -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Usuários Mais Ativos</h5>
-                        <img src="{{ grafico_usuarios_ativos }}" class="img-fluid rounded" alt="Usuários Mais Ativos">
-                    </div>
-                </div>
-            </div>
+    <div class="container">
 
-            <!-- Evolução das Avaliações -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Evolução das Avaliações</h5>
-                        <img src="{{ grafico_evolucao_reviews }}" class="img-fluid rounded"
-                            alt="Evolução das Avaliações">
-                    </div>
-                </div>
-            </div>
+        <h1 class="header">Dashboard</h1>
 
-            <!-- Preço vs Nota -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Preço vs Nota</h5>
-                        <img src="{{ grafico_preco_score }}" class="img-fluid rounded" alt="Preço vs Nota">
-                    </div>
-                </div>
-            </div>
+        <main class="grid-container">
 
-            <!-- Distribuição de Sentimentos -->
-            <div class="col-md-6">
-                <div class="card shadow-sm h-100">
-                    <div class="card-body text-center">
-                        <h5 class="card-title">Distribuição de Sentimentos</h5>
-                        <img src="{{ grafico_sentimento }}" class="img-fluid rounded" alt="Distribuição de Sentimentos">
-                    </div>
+            {% if distribuicao_das_notas_view %}
+                <div class="card">
+                    <h2>Gráfico 1</h2>
+                    <img src="data:image/png;base64,{{ distribuicao_das_notas_view }}" alt="Gráfico de Distribuição das Notas">
                 </div>
-            </div>
-        </div>
+            {% endif %}
+
+            {% if livros_mais_avaliados_view %}
+                <div class="card">
+                    <h2>Gráfico 2</h2>
+                    <img src="data:image/png;base64,{{ livros_mais_avaliados_view }}" alt="Gráfico dos Top 10 Livros Mais Avaliados">
+                </div>
+            {% endif %}
+
+            {% if usuarios_mais_ativos_view %}
+                <div class="card">
+                    <h2>Gráfico 3</h2>
+                    <img src="data:image/png;base64,{{ usuarios_mais_ativos_view }}" alt="Gráfico de Usuários Ativos">
+                </div>
+            {% endif %}
+
+            {% if evolucao_reviews_view %}
+                <div class="card">
+                    <h2>Gráfico 4</h2>
+                    <img src="data:image/png;base64,{{ evolucao_reviews_view }}" alt="Gráfico de Evolução das Avaliações por Ano">
+                </div>
+            {% endif %}
+
+            {% if preco_vs_score_view %}
+                <div class="card">
+                    <h2>Gráfico 5</h2>
+                    <img src="data:image/png;base64,{{ preco_vs_score_view }}" alt="Gráfico de Correlação entre Preço e Nota">
+                </div>
+            {% endif %}
+
+            {% if sentimento_reviews_view %}
+                <div class="card">
+                    <h2>Gráfico 6</h2>
+                    <h2>Análise de Sentimento Simples</h2>
+                    <img src="data:image/png;base64,{{ sentimento_reviews_view }}" alt="Gráfico de Análise de Sentimento">
+                </div>
+            {% endif %}
+
+        </main>
+
     </div>
 
 </body>
-
 </html>

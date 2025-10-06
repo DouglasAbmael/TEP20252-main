@@ -1,34 +1,18 @@
-{% load bootstrap4 %}
 <!DOCTYPE html>
-<html lang="en">
+<html lang="pt-br">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login</title>
-    {% bootstrap_css %}
+    <title>Entrar</title>
 </head>
 <body>
-    {% bootstrap_messages %}
-    <div class="container d-flex justify-content-center align-items-center vh-100">
-        <div class="card shadow p-4" style="max-width: 400px; width: 100%;">
-            <h1 class="text-center mb-4">Tela de Login</h1>
+    <h1>Login</h1>
 
-            <form action="{% url 'url_entrar' %}" method="POST">
-                {% csrf_token %}
-                <div class="mb-3">
-                    <input type="text" name="nome" placeholder="Digite o nome de usuário" required class="form-control">
-                </div>
-                <div class="mb-3">
-                    <input type="password" name="senha" placeholder="Digite a senha do usuário" required class="form-control">
-                </div>
-                <div class="mb-3">
-                    <input type="submit" name="entrar" value="Entrar" class="btn btn-success w-100">
-                </div>
-            </form>
-            <form action="{% url 'url_cad_user' %}" method="GET" class="mb-3">
-                <input type="submit" name="btn_criar_usuario" value="Criar Usuário" class="btn btn-success w-100">
-            </form>
-        </div>
-    </div>
+    <form action="{% url 'url_entrar' %}" method="POST">
+        {% csrf_token %}
+        <input type="text" name="nome" placeholder="Digite o usuário" required><br>
+        <input type="password" name="senha" placeholder="Digite a senha" required><br>
+        <input type="submit" name="btnEntrar" value="Entar">
+    </form>
 </body>
 </html>

@@ -1,34 +1,31 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from .models import Produto, Cliente, Vendas, ItensVenda, PerfilClientes, Avaliacao
 from django.http.response import HttpResponse
 from django.contrib.auth import login, authenticate, logout
 from django.contrib.auth.models import User
+from .models import ItemVenda, Produto, Cliente, Perfil, Venda, Avaliacao
 from django.contrib.auth.decorators import login_required
 from django.contrib import messages
+from .models import Produto
+import io
+import urllib, base64
 import pandas as pd
 import matplotlib.pyplot as plt
-import io, base64
-import matplotlib
-matplotlib.use('Agg')
-
-# Create your views here.
 
 def index(request):
     context = {
-        'texto': "Olá mundo!",
+        "texto": "Olá mundo!",
     }
     return render(request, 'index.html', context)
 
-@login_required(login_url='url_entrar')
+@login_required
 def produtos(request):
     produtos = Produto.objects.all()
     context = {
-        'produtos' : produtos,
+        'produtos': produtos,
     }
-    return render(request, 'produtos.html', context)
+    return render(request, 'entrar.html', context)
 
 def cad_produto(request):
-
     if request.user.is_authenticated:
         if request.method == "GET":
             return render(request, 'cad_produto.html')
@@ -45,11 +42,9 @@ def cad_produto(request):
             produto.save()
             return redirect('url_produtos')
     else:
-        messages.error(request, "Precisa...")
         return redirect('url_entrar')
-    
+
 def atualizar_produto(request, id):
-    #prod = Produto.objects.get(id=id)
     prod = get_object_or_404(Produto, id=id)
     if request.method == "GET":
         context = {
@@ -65,7 +60,6 @@ def atualizar_produto(request, id):
         prod.preco = preco
         prod.qtde = qtde
         prod.save()
-
     return redirect('url_produtos')
 
 def apagar_produto(request, id):
@@ -75,195 +69,261 @@ def apagar_produto(request, id):
 
 def entrar(request):
     if request.method == "GET":
-        return render(request, 'entrar.html')
+        return render (request, "entrar.html")
     else:
         username = request.POST.get('nome')
         password = request.POST.get('senha')
-        user = authenticate(username = username, password = password)
-
+        user = authenticate(username=username, password=password)
         if user:
             login(request, user)
-            return redirect('url_index')
+            return redirect('url_produtos')
         else:
-            return HttpResponse("Falha no login")
-        
+            return HttpResponse("PANE NO SISTEMA ALGUÉM ME DESCONFIGUROU")
+
 def cad_user(request):
-    if request.method == "POST":
+    if request.method == 'POST':
         nome = request.POST.get('nome')
         senha = request.POST.get('senha')
         email = request.POST.get('email')
 
         user = User.objects.filter(username=nome).first()
+
         if user:
-            return HttpResponse("Usuário já existe...")
-        
-        user = User.objects.create_user(username=nome, email=email, password=senha)
+            return HttpResponse("Usuário já existe")
+
+        user = User.objects.create_user(username=nome,email=email,password=senha)
         user.save()
-        messages.success(request, "Usuario cadastrado")
-        return render(request, "index.html")
-    else:
+        messages.successs(request, "Usuário cadastrado")
+    else: 
         return render(request, "cad_user.html")
-    
+
 def sair(request):
     logout(request)
     return redirect('url_entrar')
 
-def cad_clientes(request):
-    if request.user.is_authenticated:
-        if request.method == "GET":
-            return render(request, 'cad_clientes.html')
-        elif request.method == "POST":
-            nome = request.POST.get('nome')
-            email = request.POST.get('email')
+def cad_cliente(request):
+    if request.method == 'POST':
+        nome = request.POST.get('nome')
+        email = request.POST.get('email')
 
-            clientes = Cliente(
-                nome = nome,
-                email = email,
-            )
-            clientes.save()
-            return redirect('url_perfil_cliente')
-    else:
-        messages.error(request, "Precisa...")
-        return redirect('url_entrar')
+        cliente = Cliente.objects.filter(nome=nome).first()
 
-def perfil_cliente(request):
-    if request.user.is_authenticated:
-        if request.method == "GET":
-            clientes = Cliente.objects.all()
-            return render(request, 'cad_perfil_clientes.html', {'clientes': clientes})
-        elif request.method == "POST":
-            cliente_id = request.POST.get("cliente_id")
-            telefone = request.POST.get('telefone')
-            rua = request.POST.get('rua')
-            numero = request.POST.get('numero')
-            cep = request.POST.get('cep')
-            bairro = request.POST.get('bairro')
-            cidade = request.POST.get('cidade')
-            complemento = request.POST.get('complemento')
+        if cliente:
+            return HttpResponse("Usuário já existe")
 
-            cliente_obj = get_object_or_404(Cliente, id=cliente_id)
+        cliente = Cliente.objects.create(nome=nome,email=email)
+        cliente.save()
+        messages.successs(request, "Usuário cadastrado")
+    else: 
+        return render(request, "cad_cliente.html")
+    
+def cad_perfil(request):
+    if request.method == 'GET':
+        clientes_sem_perfil = Cliente.objects.filter(perfil__isnull=True)
+        
+        context = {
+            'clientes': clientes_sem_perfil
+        }
+        return render(request, "cad_perfil.html", context)
 
-            perfil_cliente = PerfilClientes.objects.create(
-                cliente= cliente_obj,
-                telefone = telefone,
-                rua = rua,
-                numero = numero,
-                cep = cep,
-                bairro = bairro,
-                cidade = cidade,
-                complemento = complemento,
-            )
-            perfil_cliente.save()
-            return redirect('url_index')
-    else:
-        messages.error(request, "Precisa...")
-        return redirect('url_entrar')
+    elif request.method == 'POST':
+        cliente_id = request.POST.get('cliente_id')
+        rua = request.POST.get('rua')
+        numero = request.POST.get('numero')
+        cep = request.POST.get('cep')
+        bairro = request.POST.get('bairro')
+        cidade = request.POST.get('cidade')
+        complemento = request.POST.get('complemento')
+        telefone = request.POST.get('telefone')
 
-def vendas(request):
-    if not request.user.is_authenticated:
-        messages.error(request, "Você precisa estar logado.")
-        return redirect('url_entrar')
+        if not cliente_id:
+            messages.error(request, "Você precisa selecionar um cliente.")
+            return redirect('url_cad_perfil')
+
+        cliente_obj = get_object_or_404(Cliente, id=cliente_id)
+
+        perfil = Perfil.objects.create(
+            cliente=cliente_obj,
+            rua=rua,
+            numero=numero,
+            cep=cep,
+            bairro=bairro,
+            cidade=cidade,
+            complemento=complemento,
+            telefone=telefone
+        )
+
+        messages.success(request, f"Perfil para {cliente_obj.nome} cadastrado com sucesso!")
+        return redirect('cad_perfil.html')
+
+def cad_venda(request):
     if request.method == "GET":
         clientes = Cliente.objects.all()
-        produtos = Produto.objects.all()
-        return render(request, 'vendas.html', {'clientes': clientes, 'produtos': produtos})
-    elif request.method == "POST":
-        cliente_id = request.POST.get("cliente")
-        if not cliente_id:
-            messages.error(request, "Selecione um cliente.")
-            return redirect('url_vendas')
-        
-        cliente = get_object_or_404(Cliente, id=cliente_id)
-        venda = Vendas.objects.create(cliente=cliente)
+        context = {
+            "clientes": clientes,
+        }
+        return render(request, "cad_venda.html", context)
 
-        for produto in Produto.objects.all():
-            if request.POST.get(f"produto_{produto.id}"):
-                quantidade = int(request.POST.get(f"quantidade_{produto.id}", 0))
-                
-                if quantidade > produto.qtde:
-                    messages.error(request, f"Estoque insuficiente para {produto.nome}.")
-                    return redirect('url_vendas')
-                
-                ItensVenda.objects.create(
-                    venda=venda,
-                    produto=produto,
-                    quantidade=quantidade,
-                    preco_unitario=produto.preco)
-                
-                produto.qtde -= quantidade
-                produto.save
-        
-        messages.success(request, "Venda cadastrada com sucesso!")
-        return redirect('url_index')
+    elif request.method == "POST":
+        cliente_id = request.POST.get("cliente_id")
+
+        if not cliente_id:
+            messages.error(request, "Você precisa selecionar um cliente.")
+            return redirect("url_cad_venda")
+
+        cliente = get_object_or_404(Cliente, id=cliente_id)
+
+        venda = Venda.objects.create(cliente=cliente)
+
+        messages.success(request, f"Venda criada para {cliente.nome}. Agora adicione os itens.")
+        return redirect("url_cad_venda")
     
-# --- Funções auxiliares ---
+def cad_itemvenda(request):
+    if request.method == "GET":
+        vendas = Venda.objects.all()
+        produtos = Produto.objects.all()
+        context = {
+            "vendas": vendas,
+            "produtos": produtos,
+        }
+        return render(request, "cad_itemvenda.html", context)
+
+    elif request.method == "POST":
+        venda_id = request.POST.get("venda_id")
+        produto_id = request.POST.get("produto_id")
+        qtde = request.POST.get("qtde")
+
+        if not all([venda_id, produto_id, qtde]):
+            messages.error(request, "Todos os campos são obrigatórios.")
+            return redirect("url_cad_itemvenda")
+        
+        try:
+            qtde = int(qtde)
+            if qtde <= 0:
+                raise ValueError()
+        except ValueError:
+            messages.error(request, "A quantidade deve ser um número inteiro positivo.")
+            return redirect("url_cad_itemvenda")
+
+        venda = get_object_or_404(Venda, id=venda_id)
+        produto = get_object_or_404(Produto, id=produto_id)
+
+        if produto.qtde < qtde:
+            messages.error(request, f"Estoque insuficiente para '{produto.nome}'. Disponível: {produto.qtde}.")
+            return redirect("url_cad_itemvenda")
+
+        ItemVenda.objects.create(
+            venda=venda,
+            produto=produto,
+            qtde=qtde
+        )
+
+        produto.qtde -= qtde
+        produto.save()
+
+        messages.success(request, f"Item '{produto.nome}' adicionado à venda de {venda.cliente.nome}.")
+        return redirect("url_cad_itemvenda")
+
 def get_dataframe():
-    # Troque o caminho abaixo pelo seu arquivo CSV
-    df = pd.read_csv('books-15k.csv')
+    # Busca todos os dados do banco e retorna um DataFrame do Pandas
+    avaliacoes = Avaliacao.objects.all().values()
+    df = pd.DataFrame(list(avaliacoes))
     return df
 
-def plot_to_base64():
+def plot_to_base64(fig):
+    # Converte uma figura Matplotlib para uma string base64 para ser usada no HTML
     buf = io.BytesIO()
-    plt.savefig(buf, format='png', bbox_inches='tight')
-    plt.close()
+    fig.savefig(buf, format='png')
     buf.seek(0)
-    return f"data:image/png;base64,{base64.b64encode(buf.read()).decode()}"
+    string = base64.b64encode(buf.read())
+    return urllib.parse.quote(string)
 
-def dashboard_view(request):
+def distribuicao_das_notas_view(df):
+    plt.figure(figsize=(10, 6))
+    df['review_score'].value_counts().sort_index().plot(kind='bar', color='purple')
+    plt.title('Distribuição das Notas das Avaliações')
+    plt.xlabel('Nota (Score)')
+    plt.ylabel('Quantidade de Avaliações')
+    plt.grid(axis='y', linestyle='--')
+    plt.tight_layout()
+    return plot_to_base64(plt.gcf())
+
+def livros_mais_avaliados_view(df):
+    top_10_livros = df['title'].value_counts().nlargest(10)
+    plt.figure(figsize=(12, 8))
+    top_10_livros.sort_values().plot(kind='barh', color='purple')
+    plt.title('Top 10 Livros com Mais Avaliações')
+    plt.xlabel('Número de Avaliações')
+    plt.ylabel('Título do Livro')
+    plt.tight_layout()
+    return plot_to_base64(plt.gcf())
+
+def usuarios_mais_ativos_view(df):
+    df_filtered = df.dropna(subset=['profile_name'])
+    top_15_usuarios = df_filtered['profile_name'].value_counts().nlargest(15)
+    plt.figure(figsize=(12, 8))
+    top_15_usuarios.sort_values().plot(kind='barh', color='purple')
+    plt.title('Top 15 Usuários Mais Ativos')
+    plt.xlabel('Número de Avaliações')
+    plt.ylabel('Usuário')
+    plt.tight_layout() 
+    return plot_to_base64(plt.gcf())
+
+def evolucao_reviews_view(df):
+    df['data_review'] = pd.to_datetime(df['review_time'], unit='s')
+    df['ano'] = df['data_review'].dt.year
+    avaliacoes_por_ano = df['ano'].value_counts().sort_index()
+    plt.figure(figsize=(10, 6))
+    avaliacoes_por_ano.plot(kind='line', marker='o', linestyle='-', color='purple')
+    plt.title('Evolução do Número de Avaliações por Ano')
+    plt.xlabel('Ano')
+    plt.ylabel('Quantidade de Avaliações')
+    plt.grid(True, linestyle='--')
+    plt.tight_layout()
+    return plot_to_base64(plt.gcf())
+
+def preco_vs_score_view(df):
+    df_filtered = df[df['price'] > 0]
+    if len(df_filtered) > 1000:
+        df_sample = df_filtered.sample(n=1000, random_state=42)
+    else:
+        df_sample = df_filtered
+    plt.figure(figsize=(10, 6))
+    plt.scatter(df_sample['price'], df_sample['review_score'], alpha=0.3, color='purple')
+    plt.title('Correlação entre Preço e Nota da Avaliação')
+    plt.xlabel('Preço do Livro')
+    plt.ylabel('Nota (Score)')
+    plt.grid(True, linestyle='--')
+    plt.tight_layout()
+    return plot_to_base64(plt.gcf())
+
+def sentimento_reviews_view(df):
+    palavras_positivas = ['good', 'great', 'excellent', 'i loved', 'i recommend']
+    palavras_negativas = ['bad', 'terrible', 'disappointing', "i didn't like it"]
+    def classifica_sentimento(texto):
+        texto_lower = str(texto).lower()
+        if any(palavra in texto_lower for palavra in palavras_positivas): return 'Positivo'
+        if any(palavra in texto_lower for palavra in palavras_negativas): return 'Negativo'
+        return 'Neutro'
+    df['sentimento'] = df['review_summary'].fillna('').apply(classifica_sentimento)
+    contagem_sentimento = df['sentimento'].value_counts()
+    plt.figure(figsize=(8, 8))
+    contagem_sentimento.plot(kind='pie', autopct='%1.1f%%', colors=['lightskyblue', 'purple', 'lightpink'], startangle=90)
+    plt.title('Distribuição de Sentimentos nos Sumários')
+    plt.ylabel('')
+    plt.tight_layout()
+    return plot_to_base64(plt.gcf())
+
+def dashboard(request):
     df = get_dataframe()
 
-    def gerar_grafico(figura):
-        """Função auxiliar para salvar o gráfico atual como base64 e limpar o plt."""
-        img = plot_to_base64()
-        plt.close(figura)
-        return img
-
-    # --- Gráfico 1: Usuários mais ativos ---
-    top15 = df['profile_name'].dropna().value_counts().nlargest(15).sort_values()
-    fig, ax = plt.subplots(figsize=(10, 5))
-    top15.plot.barh(ax=ax, color='steelblue')
-    ax.set(title='Top 15 Usuários Mais Ativos', xlabel='Número de Avaliações')
-    grafico_usuarios = gerar_grafico(fig)
-
-    # --- Gráfico 2: Evolução das avaliações ---
-    df['data'] = pd.to_datetime(df['review_time'], unit='s', errors='coerce')
-    contagem = df['data'].dt.year.value_counts().sort_index()
-    fig, ax = plt.subplots(figsize=(8, 4))
-    contagem.plot(marker='o', ax=ax)
-    ax.set(title='Evolução do Número de Avaliações por Ano', xlabel='Ano', ylabel='Qtd de Avaliações')
-    grafico_evolucao = gerar_grafico(fig)
-
-    # --- Gráfico 3: Preço vs Nota ---
-    df_precos = df.query('0 < price < 100')
-    fig, ax = plt.subplots(figsize=(6, 5))
-    ax.scatter(df_precos['price'], df_precos['review_score'], alpha=0.3)
-    ax.set(title='Correlação entre Preço e Nota', xlabel='Preço', ylabel='Nota')
-    grafico_preco = gerar_grafico(fig)
-
-    # --- Gráfico 4: Sentimento ---
-    positivos = ['good', 'great', 'excellent', 'love', 'recommend']
-    negativos = ['bad', 'terrible', 'disappoint', "didn't like"]
-
-    def sentimento(texto):
-        texto = str(texto).lower()
-        if any(p in texto for p in positivos): return 'Positivo'
-        if any(n in texto for n in negativos): return 'Negativo'
-        return 'Neutro'
-
-    df['sentimento'] = df['review_summary'].apply(sentimento)
-    fig, ax = plt.subplots()
-    df['sentimento'].value_counts().plot.pie(autopct='%1.1f%%', ax=ax)
-    ax.set(title='Distribuição de Sentimentos', ylabel='')
-    grafico_sentimento = gerar_grafico(fig)
-
-    # --- Retorno para o template ---
     context = {
-        'grafico_usuarios_ativos': grafico_usuarios,
-        'grafico_evolucao_reviews': grafico_evolucao,
-        'grafico_preco_score': grafico_preco,
-        'grafico_sentimento': grafico_sentimento,
+        'distribuicao_das_notas_view': distribuicao_das_notas_view(df.copy()),
+        'livros_mais_avaliados_view': livros_mais_avaliados_view(df.copy()),
+        'usuarios_mais_ativos_view': usuarios_mais_ativos_view(df.copy()),
+        'evolucao_reviews_view': evolucao_reviews_view(df.copy()),
+        'preco_vs_score_view': preco_vs_score_view(df.copy()),
+        'sentimento_reviews_view': sentimento_reviews_view(df.copy()),
     }
 
     return render(request, 'dashboard.html', context)
-
-    
